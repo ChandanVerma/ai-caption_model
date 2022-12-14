@@ -1,0 +1,25 @@
+version: '3'
+services:
+  caption_model:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    network_mode: host # might need to change this
+    image: ai-caption-model:latest
+    env_file:
+      - .env
+    environment:
+      NVIDIA_VISIBLE_DEVICES: all
+      NVIDIA_DRIVER_CAPABILITIES: all 
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: 
+                - gpu  
+    working_dir: /app
+    # command: bash -c "ray start --head --port=6300 && python serve_tasks/tasks.py && python serve_demo.py"
+    command: bash -c "ray start --head --port=6300 && python serve_tasks/tasks.py"
+    # command: nvidia-smi
